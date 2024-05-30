@@ -63,7 +63,7 @@ class ThinPrismFisheye(BaseModel):
         tg_u = 2 * self[8] * uv + self[9] * (r2 + 2 * u2) + self[10] * r2
         tg_v = 2 * self[9] * uv + self[8] * (r2 + 2 * v2) + self[11] * r2
 
-        new_pts2d = pts2d * (1 + radial[:, None])
+        new_pts2d = pts2d * radial[:, None]
         new_pts2d += torch.stack((tg_u, tg_v), dim=-1) 
         
         return new_pts2d
@@ -104,7 +104,7 @@ class ThinPrismFisheye(BaseModel):
 
         res = torch.eye(2).to(pts2d).unsqueeze(0).repeat(pts2d.shape[0], 1, 1)
 
-        res *= (1 + radial[:, None])[:, :, None]
+        res *= (radial[:, None])[:, :, None]
 
         dv = (2 * self[4] + 4 * (self[5] + (6 * self[6] + 8 * self[7] * r2) * r2) * r2) * pts2d[:, 1]
         du = (2 * self[4] + 4 * (self[5] + (6 * self[6] + 8 * self[7] * r2) * r2) * r2) * pts2d[:, 0]
