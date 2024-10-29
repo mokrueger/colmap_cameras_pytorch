@@ -9,3 +9,4 @@ from .simple_pinhole import SimplePinhole
 from .simple_radial import SimpleRadial
 from .simple_radial_fisheye import SimpleRadialFisheye
 from .thin_prism_fisheye import ThinPrismFisheye
+from .division_model import DivisionModel

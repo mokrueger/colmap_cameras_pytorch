@@ -16,5 +16,6 @@ colmap_models = [
     SimplePinhole, 
     SimpleRadial, 
     SimpleRadialFisheye, 
-    ThinPrismFisheye
+    ThinPrismFisheye,
+    DivisionModel,
 ]

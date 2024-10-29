@@ -15,6 +15,7 @@ from .simple_radial import TestSimpleRadial
 from .simple_radial_fisheye import TestSimpleRadialFisheye
 from .radial_fisheye import TestRadialFisheye
 from .thin_prism_fisheye import TestThinPrismFisheye
+from .division_model import TestDivisionModel
 
 if __name__ == '__main__':
     unittest.main()

@@ -25,7 +25,7 @@ class TestThinPrismFisheye(TestBase):
         self.model2 = get_model(img_size, torch.tensor([-0.2, 0.3, -3e-3, 2e-2, 0.002, -0.06, 0.03, -0.02]))
         self.model2._data[:2] *= 0.95
 
-        self.iters = 20
+        self.iters = 100
 
 if __name__ == '__main__':
     unittest.main()
