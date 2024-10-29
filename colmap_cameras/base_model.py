@@ -103,6 +103,11 @@ class BaseModel:
         f = f'{self.model_name} ' + ' '.join(sh) + ' '
         f = f + ' '.join(fp) + ' ' + ' '.join(pp) + ' ' + ' '.join(ep)
         return f
+    
+    def get_focal(self):
+        return self[:self.num_focal_params].mean()
+    def get_center(self):
+        return self[self.num_focal_params:self.num_focal_params + self.num_pp_params]
 
     @property
     def dtype(self): return self._data.dtype
