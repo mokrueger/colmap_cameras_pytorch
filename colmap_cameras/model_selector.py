@@ -20,8 +20,15 @@ def model_selector(model_name: str,
         )
 
     Model = models[model_name]
-
-    expected_data_length = Model.num_focal_params + Model.num_pp_params + Model.num_extra_params + 2
+    
+    if Model.num_extra_params == -1:
+        expected_data_length = Model.num_focal_params + Model.num_pp_params + 1
+        if len(data) < expected_data_length:
+            raise ValueError(
+                f"Expected at least {expected_data_length} parameters, got {len(data)}")
+        expected_data_length = len(data)
+    else:
+        expected_data_length = Model.num_focal_params + Model.num_pp_params + Model.num_extra_params + 2
     if len(data) != expected_data_length:
         raise ValueError(
             f"Expected {expected_data_length} parameters, got {len(data)}")

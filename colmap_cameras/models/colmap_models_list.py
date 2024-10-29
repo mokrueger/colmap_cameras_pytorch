@@ -18,4 +18,5 @@ colmap_models = [
     SimpleRadialFisheye, 
     ThinPrismFisheye,
     DivisionModel,
+    PolynomialDivisionModel,
 ]

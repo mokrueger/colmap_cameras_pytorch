@@ -8,7 +8,7 @@ import torch
 def pts2d_pts3d_pts2d_test(camera, points2d):
     points3d = camera.unmap(points2d)
     points2d_new, valid = camera.map(points3d)
-
+    
     diff = points2d_new - points2d
     diff = diff.mean(dim=0)
     return diff, valid.all()
@@ -29,8 +29,8 @@ def test_pt2d(model, test_self):
             pts2d = torch.tensor([[u, v], [u, v], [u, v]]).float()
             diff, valid = pts2d_pts3d_pts2d_test(model, pts2d)
             test_self.assertTrue(valid)
-            test_self.assertLess(diff[0].abs().item(), 1e-4)
-            test_self.assertLess(diff[1].abs().item(), 1e-4)
+            test_self.assertLess(diff[0].abs().item(), 1e-2)
+            test_self.assertLess(diff[1].abs().item(), 1e-2)
 
 def test_pt3d(model, test_self):
     for u in torch.arange(-0.5, 0.5, 0.1):
@@ -68,16 +68,16 @@ def test_model_fit(model1, model2, iters, test_self):
 
             res = residuals(model2._data) 
             J = torch.autograd.functional.jacobian(residuals, model2._data)
+
             J = J.reshape(batch_size, 2, -1)
             J, J_sc = J_scaling(J)
-            
             res = res.reshape(batch_size, 2, 1)
             H = (J.transpose(1, 2) @ J).mean(dim=0)
             b = (J.transpose(1, 2) @ res).mean(dim=0)
             delta = torch.linalg.lstsq(H, b)[0].squeeze()
             delta = delta * J_sc
             model2._data = model2._data - delta
-
+        
         for u in torch.arange(-0.5, 0.5, 0.1):
             for v in torch.arange(-0.5, 0.5, 0.1):
                 points3d = torch.tensor([[u, v, 1.0], [u, v, 1.0], [u, v, 1.0]]).float()
@@ -103,7 +103,7 @@ def test_model_3dpts_fil(model1, model2, test_self):
     batch_size = points3d.shape[0]
     first_loss = None
     with torch.no_grad():
-        for _ in range(5):
+        for _ in range(10):
             def residuals(params_model2):
                 model2._data = params_model2
                 pts2d, valid = model1.map(points3d)

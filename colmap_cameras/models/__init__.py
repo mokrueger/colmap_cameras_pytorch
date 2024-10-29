@@ -10,3 +10,4 @@ from .simple_radial import SimpleRadial
 from .simple_radial_fisheye import SimpleRadialFisheye
 from .thin_prism_fisheye import ThinPrismFisheye
 from .division_model import DivisionModel
+from .polynomial_division_model import PolynomialDivisionModel

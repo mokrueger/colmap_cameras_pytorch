@@ -23,7 +23,7 @@ class CompanionMatrixRoot1D(torch.autograd.Function):
     a_0 + a_1 * x + a_2 * x^2 + ... + a_n * x^n
     [a_0, a_1, a_2, ..., a_n]
     """
-    IMAG_EPS = 1e-8
+    IMAG_EPS = 1e-4
 
     @staticmethod
     def forward(ctx, polynomial):
@@ -40,7 +40,7 @@ class CompanionMatrixRoot1D(torch.autograd.Function):
         mask = eigs.real > 0.0
         mask = mask & (eigs.imag.abs() < CompanionMatrixRoot1D.IMAG_EPS * eigs.real.abs())
 
-        roots = torch.where(mask, eigs.real, -1).max(dim=-1)[0].reshape(-1, 1)
+        roots = torch.where(mask, eigs.real, torch.inf).min(dim=-1)[0].reshape(-1, 1)
         roots = roots.reshape(-1)
         valid = roots > 0
         ctx.save_for_backward(polynomial, roots, valid)
