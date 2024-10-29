@@ -11,7 +11,7 @@ class BaseModel:
     """
     _image_shape : torch.Tensor
     _data : torch.Tensor
-    ROOT_FINDING_MAX_ITERATIONS = 50
+    ROOT_FINDING_MAX_ITERATIONS = 100
     OPTIMIZATION_FIX_FOCALS = False
     OPTIMIZATION_FIX_CENTER = True
     OPTIMIZATION_FIX_EXTRA = False
@@ -20,6 +20,11 @@ class BaseModel:
     def __init__(self, data, image_shape):
         self._data = data
         self._image_shape = image_shape
+        if self.num_extra_params == -1:
+            if data.shape[0] < self.num_focal_params + self.num_pp_params + 1:
+                raise ValueError(f"Expected at least {self.num_focal_params + self.num_pp_params + 1} parameters, got {data.shape[0]}")
+            self.num_extra_params = data.shape[0] - self.num_focal_params - self.num_pp_params
+
         if data.shape[0] != self.num_focal_params + self.num_pp_params + self.num_extra_params:
             raise ValueError(f"Expected {self.num_focal_params + self.num_pp_params + self.num_extra_params} parameters, got {data.shape[0]}")
     

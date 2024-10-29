@@ -24,7 +24,7 @@ class DivisionModel(BaseModel):
 
     @staticmethod
     def default_initialization(image_shape):
-        x = torch.zeros(8)
+        x = torch.zeros(4)
         x[0] = (image_shape[0] + image_shape[1]) / 4
         x[1:2] = torch.tensor([image_shape[0], image_shape[1]]) / 2
         x[3] = 0.0

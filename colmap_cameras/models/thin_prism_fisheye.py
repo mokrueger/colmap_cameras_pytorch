@@ -44,7 +44,7 @@ class ThinPrismFisheye(BaseModel):
 
         theta = torch.norm(dist_uv, dim=-1)
         theta_cos_theta = theta * torch.cos(theta)
-        mask  = theta > self.EPSILON
+        mask  = theta_cos_theta > self.EPSILON
 
         new_r = torch.ones_like(theta)
         new_r[mask] = (torch.sin(theta[mask]) / theta_cos_theta[mask])
@@ -58,10 +58,10 @@ class ThinPrismFisheye(BaseModel):
         uv = pts2d[:, 0] * pts2d[:, 1]
         r2 = u2 + v2
 
-        radial = 1 + (self[4] + (self[5] + (self[6] + self[7] * r2) * r2) * r2) * r2
+        radial = 1 + (self[4] + (self[5] + (self[8] + self[9] * r2) * r2) * r2) * r2
 
-        tg_u = 2 * self[8] * uv + self[9] * (r2 + 2 * u2) + self[10] * r2
-        tg_v = 2 * self[9] * uv + self[8] * (r2 + 2 * v2) + self[11] * r2
+        tg_u = 2 * self[6] * uv + self[7] * (r2 + 2 * u2) + self[10] * r2
+        tg_v = 2 * self[7] * uv + self[6] * (r2 + 2 * v2) + self[11] * r2
 
         new_pts2d = pts2d * radial[:, None]
         new_pts2d += torch.stack((tg_u, tg_v), dim=-1) 
@@ -100,24 +100,24 @@ class ThinPrismFisheye(BaseModel):
         v2 = pts2d[:, 1] ** 2
         r2 = u2 + v2
 
-        radial = 1 + (self[4] + (self[5] + (self[6] + self[7] * r2) * r2) * r2) * r2
+        radial = 1 + (self[4] + (self[5] + (self[8] + self[9] * r2) * r2) * r2) * r2
 
         res = torch.eye(2).to(pts2d).unsqueeze(0).repeat(pts2d.shape[0], 1, 1)
 
         res *= (radial[:, None])[:, :, None]
 
-        dv = (2 * self[4] + 4 * (self[5] + (6 * self[6] + 8 * self[7] * r2) * r2) * r2) * pts2d[:, 1]
-        du = (2 * self[4] + 4 * (self[5] + (6 * self[6] + 8 * self[7] * r2) * r2) * r2) * pts2d[:, 0]
+        dv = (2 * self[4] + 4 * (self[5] + (6 * self[8] + 8 * self[9] * r2) * r2) * r2) * pts2d[:, 1]
+        du = (2 * self[4] + 4 * (self[5] + (6 * self[8] + 8 * self[9] * r2) * r2) * r2) * pts2d[:, 0]
 
         res[:,0,0] += du * pts2d[:, 0]
         res[:,1,1] += dv * pts2d[:, 1]
         res[:,0,1] += dv * pts2d[:, 0]
         res[:,1,0] += du * pts2d[:, 1]
         
-        res[:,0,0] += 2 * self[8] * pts2d[:, 1] + 6 * self[9] * pts2d[:, 0] + 2 * self[10] * pts2d[:, 0]
-        res[:,1,1] += 2 * self[9] * pts2d[:, 0] + 6 * self[8] * pts2d[:, 1] + 2 * self[11] * pts2d[:, 1]
-        res[:,0,1] += 2 * self[8] * pts2d[:, 0] + 2 * self[9] * pts2d[:, 1] + 2 * self[10] * pts2d[:, 1]
-        res[:,1,0] += 2 * self[9] * pts2d[:, 1] + 2 * self[8] * pts2d[:, 0] + 2 * self[11] * pts2d[:, 0]
+        res[:,0,0] += 2 * self[6] * pts2d[:, 1] + 6 * self[7] * pts2d[:, 0] + 2 * self[10] * pts2d[:, 0]
+        res[:,1,1] += 2 * self[7] * pts2d[:, 0] + 6 * self[6] * pts2d[:, 1] + 2 * self[11] * pts2d[:, 1]
+        res[:,0,1] += 2 * self[6] * pts2d[:, 0] + 2 * self[7] * pts2d[:, 1] + 2 * self[10] * pts2d[:, 1]
+        res[:,1,0] += 2 * self[7] * pts2d[:, 1] + 2 * self[6] * pts2d[:, 0] + 2 * self[11] * pts2d[:, 0]
 
         return res
 

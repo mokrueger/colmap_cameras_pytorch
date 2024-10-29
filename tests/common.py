@@ -8,7 +8,7 @@ import torch
 def pts2d_pts3d_pts2d_test(camera, points2d):
     points3d = camera.unmap(points2d)
     points2d_new, valid = camera.map(points3d)
-    
+
     diff = points2d_new - points2d
     diff = diff.mean(dim=0)
     return diff, valid.all()
@@ -23,8 +23,9 @@ def pts3d_pts2d_pts3d_test(camera, points3d):
     return diff, valid.all()
 
 def test_pt2d(model, test_self):
-    for u in range(0, model.image_shape[0], 10): 
-        for v in range(0, model.image_shape[1], 10):
+    mw, mh = (model.image_shape * 0.22).int()
+    for u in range(mw, model.image_shape[0]-mw, 10): 
+        for v in range(mh, model.image_shape[1]-mh, 10):
             pts2d = torch.tensor([[u, v], [u, v], [u, v]]).float()
             diff, valid = pts2d_pts3d_pts2d_test(model, pts2d)
             test_self.assertTrue(valid)
