@@ -32,7 +32,7 @@ class PolynomialDivisionModel(BaseModel):
         return PolynomialDivisionModel(x, image_shape)
 
     def map(self, points3d):
-        valid = torch.ones(points3d.shape[0], dtype=torch.bool)
+        valid = torch.ones(points3d.shape[0], dtype=torch.bool, device=points3d.device)
         norm = torch.linalg.norm(points3d[:, :2], dim=-1)
 
         mask = norm > self.EPSILON
@@ -42,13 +42,13 @@ class PolynomialDivisionModel(BaseModel):
         z = points3d[:, 2][mask] / norm[mask]
         uv = points3d[:, :2] / norm[..., None]
         
-        polynomials = torch.zeros(mask.sum(), self.num_extra_params + 2)
+        polynomials = torch.zeros(mask.sum(), self.num_extra_params + 2).to(points3d.device)
         polynomials[:, 2:] = self[3:] * self[0]
         polynomials[:, 1] = -z
         polynomials[:, 0] = self[0]
        
         roots, valid_roots = CompanionMatrixRoot1D.apply(polynomials)
-
+        
         alpha[mask] = roots
         valid[mask] = valid_roots
 
