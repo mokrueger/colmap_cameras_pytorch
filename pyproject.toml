@@ -7,4 +7,4 @@ name = "colmap_cameras"
 version = "0.1.0"
 
 [tool.setuptools]
-packages = ["colmap_cameras"]
+packages = ["colmap_cameras", "colmap_cameras.models", "colmap_cameras.utils"]
