@@ -5,6 +5,7 @@ Colmap camera models implemented in PyTorch
 """
 import torch
 import cv2
+import numpy as np
 from ..models import SimplePinhole
 
 
@@ -13,7 +14,7 @@ class Remapper:
     def __init__(self, step=1):
         self.step = step
 
-    def remap(self, model_in, model_out, img_path):
+    def remap(self, model_in, model_out, img):
         w_i, h_i = [int(x.item()) for x in model_out.image_shape]
         device = model_out.device
         assert model_in.device == device, "Models should be on the same device"
@@ -34,11 +35,13 @@ class Remapper:
         xlut = points2d[..., 0].cpu().numpy()
         ylut = points2d[..., 1].cpu().numpy()
         
-        img = cv2.imread(img_path)
+        if isinstance(img, str):
+            img = cv2.imread(img)
+
         img = cv2.remap(img, xlut, ylut, cv2.INTER_LINEAR)
         img = cv2.resize(img, (w_i, h_i))
         return img
     
-    def remap_from_fov(self, model_in, fov_out, img_path):
+    def remap_from_fov(self, model_in, fov_out, img):
         model_out = SimplePinhole.from_fov(fov_out, model_in.image_shape).to(model_in.device)
-        return self.remap(model_in, model_out, img_path)
+        return self.remap(model_in, model_out, img)
