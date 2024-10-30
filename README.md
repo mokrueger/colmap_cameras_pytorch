@@ -106,6 +106,16 @@ model = Pinhole(params, image_shape)
 python3 -m apps.refit_model --input_camera "SIMPLE_RADIAL 100 100 100 50 50 0.3"  --output_camera "RADIAL_FISHEYE" --iterations 20
 ```
 
+### Camera model remapper
+
+[`colmap_cameras.utils.remap`](colmap_cameras/utils/remap.py) is a class that can be used to remap one camera model to another.
+
+```python
+from colmap_cameras_pytorch.colmap_cameras.util.remapper import Remapper
+remapper = Remapper(step = 4) # the step of arange for the image grid
+img = remapper.remap(model_in, model_out, img_path) 
+img = remapper.remap_from_fov(model_in, fov_out, img_path) # fov in degrees
+```
 
 ### Root solvers
 

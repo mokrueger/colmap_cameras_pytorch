@@ -22,6 +22,13 @@ class SimplePinhole(BaseModel):
         x[1:3] = torch.tensor([image_shape[0], image_shape[1]]) / 2
         x[0] = x[1:3].mean()
         return SimplePinhole(x, image_shape)
+    
+    @staticmethod
+    def from_fov(fov, image_shape):
+        x = torch.zeros(3)
+        x[1:3] = torch.tensor([image_shape[0], image_shape[1]]) / 2
+        x[0] = x[1:3].mean() / torch.tan(torch.tensor(fov) / 2 * torch.pi / 180) / 2
+        return SimplePinhole(x, image_shape)
 
     def map(self, points3d):
         valid = points3d[:, 2] > 0
