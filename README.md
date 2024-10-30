@@ -108,7 +108,7 @@ python3 -m apps.refit_model --input_camera "SIMPLE_RADIAL 100 100 100 50 50 0.3"
 
 ### Camera model remapper
 
-[`colmap_cameras.utils.remapper`](colmap_cameras/utils/remap.py) is a class that can be used to remap one camera model to another.
+[`colmap_cameras.utils.remapper`](colmap_cameras/utils/remapper.py) is a class that can be used to remap one camera model to another.
 
 ```python
 from colmap_cameras_pytorch.colmap_cameras.util.remapper import Remapper
