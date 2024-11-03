@@ -17,6 +17,7 @@ from .radial_fisheye import TestRadialFisheye
 from .thin_prism_fisheye import TestThinPrismFisheye
 from .division_model import TestDivisionModel
 from .polynomial_division_model import TestPolynomialDivisionModel
+from .unified_camera_model import TestUnifiedCameraModel
 
 if __name__ == '__main__':
     unittest.main()

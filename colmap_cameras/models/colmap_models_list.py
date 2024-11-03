@@ -19,4 +19,5 @@ colmap_models = [
     ThinPrismFisheye,
     DivisionModel,
     PolynomialDivisionModel,
+    UnifiedCameraModel,
 ]
