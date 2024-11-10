@@ -20,4 +20,5 @@ colmap_models = [
     DivisionModel,
     PolynomialDivisionModel,
     UnifiedCameraModel,
+    MeisCameraModel,
 ]

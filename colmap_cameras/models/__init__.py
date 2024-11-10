@@ -12,3 +12,4 @@ from .thin_prism_fisheye import ThinPrismFisheye
 from .division_model import DivisionModel
 from .polynomial_division_model import PolynomialDivisionModel
 from .unified_camera_model import UnifiedCameraModel
+from .meis_camera_model import MeisCameraModel

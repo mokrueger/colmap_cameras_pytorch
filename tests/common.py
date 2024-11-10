@@ -68,12 +68,12 @@ def test_model_fit(model1, model2, iters, test_self):
 
             res = residuals(model2._data) 
             J = torch.autograd.functional.jacobian(residuals, model2._data)
-
-            J = J.reshape(batch_size, 2, -1)
+            J = J.reshape(res.shape[0], 2, -1)
             J, J_sc = J_scaling(J)
-            res = res.reshape(batch_size, 2, 1)
+            res = res.reshape(-1, 2, 1)
             H = (J.transpose(1, 2) @ J).mean(dim=0)
             b = (J.transpose(1, 2) @ res).mean(dim=0)
+
             delta = torch.linalg.lstsq(H, b)[0].squeeze()
             delta = delta * J_sc
             model2._data = model2._data - delta
@@ -113,7 +113,7 @@ def test_model_3dpts_fil(model1, model2, test_self):
 
             res = residuals(model2._data) 
             J = torch.autograd.functional.jacobian(residuals, model2._data)
-            J = J.reshape(batch_size, 3, -1)
+            J = J.reshape(res.shape[0], 3, -1)
             J, J_sc = J_scaling(J)
             
             res = res.reshape(batch_size, 3, 1)
