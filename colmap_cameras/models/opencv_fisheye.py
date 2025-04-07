@@ -34,18 +34,16 @@ def is_monotonous_polynomial(distortion, max_theta=None):
     # theta_range = Interval(0, max_theta)
     # return is_monotonic(f_theta, theta_range)
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-
     # this is the derivative of the fisheye distortion stuff
     # 1 + (3 * k1 * θ^2) + (5 * k1 * θ^4) + (7 * k1 * θ^6) + (9 * k1 * θ^8)
-    polynomial = torch.zeros(9).to(device)
-    polynomial[0] = torch.tensor(distortion[3]).to(device) * 9  # x^8
+    polynomial = torch.zeros(9)
+    polynomial[0] = torch.tensor(distortion[3]) * 9  # x^8
     polynomial[1] = 0  # x^7
-    polynomial[2] = torch.tensor(distortion[2]).to(device) * 7  # x^6
+    polynomial[2] = torch.tensor(distortion[2]) * 7  # x^6
     polynomial[3] = 0  # x^5
-    polynomial[4] = torch.tensor(distortion[1]).to(device) * 5  # x^4
+    polynomial[4] = torch.tensor(distortion[1]) * 5  # x^4
     polynomial[5] = 0  # x^3
-    polynomial[6] = torch.tensor(distortion[0]).to(device) * 3  # x^2
+    polynomial[6] = torch.tensor(distortion[0]) * 3  # x^2
     polynomial[7] = 0  # x^1
     polynomial[8] = 1  # x^0
 
@@ -100,12 +98,11 @@ def max_theta_for_unmap_from_points(points2d, intrinsics, distortion):
     # return .....
 
     # Version with torch
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    polynomial = torch.zeros(10).to(device)
-    polynomial[0] = torch.tensor(distortion[3]).to(device)
-    polynomial[2] = torch.tensor(distortion[2]).to(device)
-    polynomial[4] = torch.tensor(distortion[1]).to(device)
-    polynomial[6] = torch.tensor(distortion[0]).to(device)
+    polynomial = torch.zeros(10)
+    polynomial[0] = torch.tensor(distortion[3])
+    polynomial[2] = torch.tensor(distortion[2])
+    polynomial[4] = torch.tensor(distortion[1])
+    polynomial[6] = torch.tensor(distortion[0])
     polynomial[8] = 1
     polynomial[9] = -maximum_r
 
