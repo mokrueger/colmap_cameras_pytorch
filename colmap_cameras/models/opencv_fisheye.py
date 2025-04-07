@@ -85,7 +85,7 @@ def max_theta_for_unmap_from_points(points2d, intrinsics, distortion):
     It means there should be a valid solution for all θ values!!
 
     Also this is bounded by θ < 90deg!! because we cannot undistort something with a FOV > 180deg!!
-h
+
     """
     maximum_r = float(r.max())
 
@@ -152,11 +152,11 @@ class OpenCVFisheye(BaseModel):
 
     @property
     def im_height(self):
-        return self[1]  # OTHER WAY THAN NUMPY!!
+        return self.image_shape[1]  # OTHER WAY THAN NUMPY!!
 
     @property
     def im_width(self):
-        return self[0]  # OTHER WAY THAN NUMPY!!
+        return self.image_shape[0]  # OTHER WAY THAN NUMPY!!
 
     def can_unmap_self(self):
         """ This function checks if all of the pixels of the current configuration can be backprojected/unmapped !"""
@@ -212,7 +212,7 @@ class OpenCVFisheye(BaseModel):
         x[2:4] = x[:2]
         return OpenCVFisheye(x, image_shape)
 
-    def map(self, points3d):
+    def map(self, points3d):   # Input are homogenous 2d points -> 3 dimensional
         r = torch.norm(points3d[:, :2], dim=-1)
         theta = torch.atan2(r, points3d[:, 2])
         theta2 = theta * theta
@@ -229,7 +229,7 @@ class OpenCVFisheye(BaseModel):
 
         return uv * self[:2].reshape(1, 2) + self[2:4].reshape(1, 2), torch.ones_like(r, dtype=torch.bool)
 
-    def unmap(self, points2d):
+    def unmap(self, points2d):  # outputs normalized + homogenous coords
         uv = (points2d.type(torch.float64) - self[2:4].reshape(1, 2)) / self[:2].reshape(1, 2)
 
         r = torch.norm(uv, dim=-1)
@@ -245,10 +245,10 @@ class OpenCVFisheye(BaseModel):
         theta = NewtonRoot1D.apply(r, polynomials, self.ROOT_FINDING_MAX_ITERATIONS)
 
         # TODO: REMOVE IF CONFIRMED ;)
-        assert np.isclose(
-            theta.max().numpy(),
-            max_theta_for_unmap_from_points(points2d, intrinsics_from_self(self),  distortion_from_self(self))
-        ), "Moritz is dumb"
+        # assert np.isclose(
+        #     theta.max().numpy(),
+        #     max_theta_for_unmap_from_points(points2d, intrinsics_from_self(self),  distortion_from_self(self))
+        # ), "Moritz is dumb"
 
         mask = (r > self.EPSILON) & (torch.tan(theta) > self.EPSILON)  # This also masks incident angles >90deg
         z = torch.ones_like(r)

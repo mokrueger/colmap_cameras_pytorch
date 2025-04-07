@@ -35,7 +35,7 @@ class Remapper:
     #     theta_range = Interval(0, max_theta)
     #     return is_monotonic(f_theta, theta_range)
 
-    def remap(self, model_in, model_out, img, return_intermediates=False, borderValue=None, borderMode=None):
+    def remap(self, model_in, model_out, img, return_intermediates=False, borderValue=None, borderMode=None, interpolation=None):
         w_i, h_i = [int(x.item()) for x in model_out.image_shape]
         device = model_out.device
         assert model_in.device == device, "Models should be on the same device"
@@ -60,8 +60,9 @@ class Remapper:
             img = cv2.imread(img)
 
         remap_kwargs = {"borderValue": borderValue if borderValue is not None else [np.nan, np.nan, np.nan],
-                        "borderMode": borderMode if borderMode is not None else cv2.BORDER_CONSTANT}
-        img = cv2.remap(img.astype(np.float32), xlut, ylut, cv2.INTER_LINEAR, **remap_kwargs)
+                        "borderMode": borderMode if borderMode is not None else cv2.BORDER_CONSTANT,
+                        "interpolation": interpolation if interpolation is not None else cv2.INTER_LINEAR}
+        img = cv2.remap(img.astype(np.float32), xlut, ylut, **remap_kwargs)
         img = cv2.resize(img, (w_i, h_i))
         if not return_intermediates:
             return img
